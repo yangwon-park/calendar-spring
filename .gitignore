@@ -38,3 +38,10 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+docker/mysql/data
+docker/elasticsearch/data
+
+### Claude Code ###
+.claude/
+CLAUDE.md
