@@ -1,0 +1,28 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: calendar-couple-mysql
+    ports:
+      - "3386:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: calendar-couple
+      MYSQL_DATABASE: calendar-couple-dev
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: calendar-couple
+    volumes:
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+      - ./docker/mysql/data:/var/lib/mysql
+    networks:
+      - calendar-couple-network
+  redis:
+    image: redis:7-alpine
+    container_name: calendar-couple-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - calendar-couple-network
+    command: redis-server --appendonly yes  # 데이터 영속성 옵션 (AOF) 활성화, RDB 방식은?
+networks:
+  calendar-couple-network:
+    driver: bridge
