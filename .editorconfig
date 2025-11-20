@@ -1,0 +1,20 @@
+[*]
+charset = utf-8
+indent_style = tab
+max_line_length = 120
+insert_final_newline = false
+ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_value-parameter-comment = disabled
+ktlint_standard_no-blank-line-in-list = disabled
+ktlint_standard_package-name = disabled
+
+[**/test/**/*.kt]
+ktlint_standard_function-naming = disabled
+ktlint_standard_no-empty-file = disabled
+
+[*.{java,kt,kts,gradle}]
+indent_size = 4
+ij_continuation_indent_size = 4
+
+[*.{properties,yaml,yml}]
+indent_size = 2
