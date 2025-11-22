@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: calendar-couple-test
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL;DATABASE_TO_UPPER=false;NON_KEYWORDS=USER
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: never
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+server:
+  port: 0
+
+jwt:
+  secret: 9FyokyK5l0TcAHrnYjs4LzLB4OhFpk14XGlBnyf0kmVoz/BJzrJfjw8tvnpj+w0k2ocRnz+dRoUMQJqXCD+bUg== # 테스트용
+  issuer: calendar-couple-test
+  audience: calendar-couple-test-api
+  access-token-expiration: 1h
+  refresh-token-expiration: 7d
+
+cors:
+  allowed-origins:
+    - "*"
+  allowed-headers:
+    - "*"
+  allowed-methods:
+    - "*"
+  allowed-credentials: true
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: TRACE

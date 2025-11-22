@@ -94,3 +94,123 @@ allOpen {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+tasks.named("test") {
+	finalizedBy(tasks.named("jacocoTestReport"))
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+	// jacoco 실행 데이터 파일 경로 지정
+	executionData.setFrom(fileTree(project.layout.buildDirectory).include("jacoco/test.exec"))
+
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+		csv.required.set(false)
+	}
+
+	finalizedBy(tasks.named("jacocoTestCoverageVerification"))
+}
+
+tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+	// jacoco 실행 데이터 파일 경로 지정
+	executionData.setFrom(fileTree(project.layout.buildDirectory).include("jacoco/test.exec"))
+
+	violationRules {
+		rule {
+			limit {
+				minimum = "0.70".toBigDecimal() // 커버리지 70%
+			}
+		}
+	}
+}
+
+// 단위테스트만 실행하는 태스크 (통합테스트 제외)
+tasks.register<Test>("unitTest") {
+	description = "Run unit tests only (exclude integration tests)"
+	group = "verification"
+	useJUnitPlatform()
+
+	// integration 패키지 제외
+	exclude("**/integration/**")
+}
+
+// unitTest 전용 jacoco 리포트 태스크
+tasks.register<JacocoReport>("jacocoUnitTestReport") {
+	description = "Generate Jacoco coverage report for unit tests"
+	group = "verification"
+
+	executionData(files("${project.layout.buildDirectory.get()}/jacoco/unitTest.exec"))
+	sourceSets(sourceSets.main.get())
+
+	// 커버리지 측정 대상에서 제외
+	classDirectories.setFrom(
+		files(sourceSets.main.get().output).asFileTree.matching {
+			exclude(
+				"**/*Controller*",
+				"**/config/**",
+				"**/exception/**",
+				"**/properties/**",
+				"**/infrastructure/persistence/**",
+				"**/infrastructure/oauth2/**",
+				"**/common/dto/**",
+				"**/common/BaseTimeEntity*",
+			)
+		},
+	)
+
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+		csv.required.set(false)
+		xml.outputLocation.set(file("${project.layout.buildDirectory.get()}/reports/jacoco/unitTest/jacocoTestReport.xml"))
+		html.outputLocation.set(file("${project.layout.buildDirectory.get()}/reports/jacoco/unitTest/html"))
+	}
+
+	dependsOn(tasks.named("unitTest"))
+}
+
+// unitTest 전용 커버리지 검증 태스크
+tasks.register<JacocoCoverageVerification>("jacocoUnitTestCoverageVerification") {
+	description = "Verify unit test coverage meets minimum threshold"
+	group = "verification"
+
+	executionData(files("${project.layout.buildDirectory.get()}/jacoco/unitTest.exec"))
+	sourceSets(sourceSets.main.get())
+
+	// 커버리지 측정 대상에서 제외
+	classDirectories.setFrom(
+		files(sourceSets.main.get().output).asFileTree.matching {
+			exclude(
+				"**/*Controller*",
+				"**/config/**",
+				"**/exception/**",
+				"**/properties/**",
+				"**/infrastructure/persistence/**",
+				"**/infrastructure/oauth2/**",
+				"**/common/dto/**",
+				"**/common/BaseTimeEntity*",
+			)
+		},
+	)
+
+	violationRules {
+		rule {
+			limit {
+				minimum = "0.70".toBigDecimal()
+			}
+		}
+	}
+
+	// 리포트 파일이 필요하므로 의존성 추가
+	dependsOn(tasks.named("jacocoUnitTestReport"))
+}
+
+// unitTest 실행 시 리포트와 검증 자동 실행
+tasks.named("unitTest") {
+	finalizedBy(tasks.named("jacocoUnitTestReport"))
+}
+
+tasks.named("jacocoUnitTestReport") {
+	finalizedBy(tasks.named("jacocoUnitTestCoverageVerification"))
+}
