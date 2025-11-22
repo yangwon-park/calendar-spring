@@ -16,7 +16,7 @@ class SignInRequestValidationUnitTest :
 				Given("모든 필드가 유효한 값으로 주어졌을 때") {
 					val dto =
 						SignInRequest(
-							code = "user@example.com",
+							accessToken = "user@example.com",
 							provider = "password123",
 						)
 

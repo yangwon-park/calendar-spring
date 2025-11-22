@@ -60,7 +60,7 @@ class AuthServiceUnitTest :
 				Given("OAuth2 인증 코드가 주어지고, 기존에 가입하지 않은 사용자인 경우") {
 					val fixture = createAuthServiceFixture()
 
-					val testCode = "valid-oauth2-code"
+					val testAccessToken = "valid-oauth2-access-token"
 					val testProvider = "GOOGLE"
 					val testUserInfo =
 						com.calendar.couple.auth.infrastructure.oauth2.OAuth2UserInfo(
@@ -73,8 +73,7 @@ class AuthServiceUnitTest :
 
 					// OAuth2 Client 모킹
 					every { fixture.oauth2ClientFactory.getClient(testProvider) } returns mockOAuth2Client
-					every { mockOAuth2Client.getAccessToken(testCode) } returns "provider-access-token"
-					every { mockOAuth2Client.getUserInfo("provider-access-token") } returns testUserInfo
+					every { mockOAuth2Client.getUserInfo(testAccessToken) } returns testUserInfo
 
 					// 기존 AccountProvider 없음 (신규 회원)
 					every {
@@ -112,7 +111,7 @@ class AuthServiceUnitTest :
 					every { fixture.tokenRepository.saveRefreshToken(any()) } just runs
 
 					When("OAuth2 로그인을 수행하면") {
-						val result = fixture.service.signIn(testCode, testProvider)
+						val result = fixture.service.signIn(testAccessToken, testProvider)
 
 						Then("액세스 토큰과 리프레시 토큰을 반환한다") {
 							result.accessToken shouldBe "ACCESS-TOKEN-USER"
@@ -121,8 +120,7 @@ class AuthServiceUnitTest :
 
 						Then("OAuth2 Client로 인증을 수행한다") {
 							verify(exactly = 1) { fixture.oauth2ClientFactory.getClient(testProvider) }
-							verify(exactly = 1) { mockOAuth2Client.getAccessToken(testCode) }
-							verify(exactly = 1) { mockOAuth2Client.getUserInfo("provider-access-token") }
+							verify(exactly = 1) { mockOAuth2Client.getUserInfo(testAccessToken) }
 						}
 
 						Then("새 Account와 AccountProvider를 생성한다") {
@@ -156,8 +154,7 @@ class AuthServiceUnitTest :
 
 					// OAuth2 Client 모킹
 					every { fixture.oauth2ClientFactory.getClient(testProvider) } returns mockOAuth2Client
-					every { mockOAuth2Client.getAccessToken(testCode) } returns "provider-access-token"
-					every { mockOAuth2Client.getUserInfo("provider-access-token") } returns testUserInfo
+					every { mockOAuth2Client.getUserInfo(testCode) } returns testUserInfo
 
 					// 기존 AccountProvider 존재
 					val existingAccountProvider =
@@ -202,8 +199,7 @@ class AuthServiceUnitTest :
 
 						Then("OAuth2 Client로 인증을 수행한다") {
 							verify(exactly = 1) { fixture.oauth2ClientFactory.getClient(testProvider) }
-							verify(exactly = 1) { mockOAuth2Client.getAccessToken(testCode) }
-							verify(exactly = 1) { mockOAuth2Client.getUserInfo("provider-access-token") }
+							verify(exactly = 1) { mockOAuth2Client.getUserInfo(testCode) }
 						}
 
 						Then("기존 Account를 조회하고 새로운 Account는 생성하지 않는다") {
@@ -236,8 +232,7 @@ class AuthServiceUnitTest :
 
 					// OAuth2 Client 모킹
 					every { fixture.oauth2ClientFactory.getClient(testProvider) } returns mockOAuth2Client
-					every { mockOAuth2Client.getAccessToken(testCode) } returns "provider-access-token"
-					every { mockOAuth2Client.getUserInfo("provider-access-token") } returns testUserInfo
+					every { mockOAuth2Client.getUserInfo(testCode) } returns testUserInfo
 
 					// 기존 AccountProvider 존재
 					val existingAccountProvider =
@@ -279,8 +274,7 @@ class AuthServiceUnitTest :
 
 					// OAuth2 Client 모킹
 					every { fixture.oauth2ClientFactory.getClient(testProvider) } returns mockOAuth2Client
-					every { mockOAuth2Client.getAccessToken(testCode) } returns "provider-access-token"
-					every { mockOAuth2Client.getUserInfo("provider-access-token") } returns testUserInfo
+					every { mockOAuth2Client.getUserInfo(testCode) } returns testUserInfo
 
 					// 기존 AccountProvider 없음
 					every {
@@ -307,7 +301,7 @@ class AuthServiceUnitTest :
 			}
 
 			Context("OAuth2 로그인 실패 - OAuth2 Provider 통신 실패") {
-				Given("OAuth2 Provider에서 액세스 토큰을 가져오지 못한 경우") {
+				Given("OAuth2 Provider에서 유저 정보를 가져오지 못한 경우") {
 					val fixture = createAuthServiceFixture()
 
 					val testCode = "invalid-code"
@@ -316,7 +310,7 @@ class AuthServiceUnitTest :
 
 					// OAuth2 Client 모킹
 					every { fixture.oauth2ClientFactory.getClient(testProvider) } returns mockOAuth2Client
-					every { mockOAuth2Client.getAccessToken(testCode) } throws RuntimeException("Invalid authorization code")
+					every { mockOAuth2Client.getUserInfo(testCode) } throws RuntimeException("OAuth2 통신 실패")
 
 					When("OAuth2 로그인을 시도하면") {
 						Then("예외가 전파된다") {

@@ -2,7 +2,6 @@ package com.calendar.couple.auth.infrastructure.oauth2
 
 import com.calendar.couple.common.properties.oauth2.GoogleOAuth2Properties
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 
@@ -14,24 +13,6 @@ class GoogleOAuth2Client(
 	private val restClient: RestClient,
 	private val googleOAuth2Properties: GoogleOAuth2Properties,
 ) : OAuth2Client {
-	override fun getAccessToken(code: String): String {
-		val response =
-			restClient
-				.post()
-				.uri(googleOAuth2Properties.tokenUri)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.body(
-					"grant_type=$GRANT_TYPE" +
-						"&client_id=${googleOAuth2Properties.clientId}" +
-						"&client_secret=${googleOAuth2Properties.clientSecret}" +
-						"&redirect_uri=${googleOAuth2Properties.redirectUri}" +
-						"&code=$code",
-				).retrieve()
-				.body(GoogleTokenResponse::class.java) ?: throw IllegalArgumentException("Google 통신 에러 발생")
-		
-		return response.accessToken
-	}
-
 	override fun getUserInfo(accessToken: String): OAuth2UserInfo {
 		val response =
 			restClient
@@ -48,19 +29,6 @@ class GoogleOAuth2Client(
 		)
 	}
 
-	private data class GoogleTokenResponse(
-		@field:JsonProperty("access_token")
-		val accessToken: String,
-		@field:JsonProperty("token_type")
-		val tokenType: String,
-		@field:JsonProperty("expires_in")
-		val expiresIn: Int,
-		@field:JsonProperty("refresh_token")
-		val refreshToken: String? = null,
-		@field:JsonProperty("scope")
-		val scope: String? = null,
-	)
-
 	private data class GoogleUserResponse(
 		@field:JsonProperty("sub")
 		val id: String,
@@ -71,8 +39,4 @@ class GoogleOAuth2Client(
 		@field:JsonProperty("email_verified")
 		val emailVerified: Boolean = true,
 	)
-
-	companion object {
-		private const val GRANT_TYPE = "authorization_code"
-	}
 }

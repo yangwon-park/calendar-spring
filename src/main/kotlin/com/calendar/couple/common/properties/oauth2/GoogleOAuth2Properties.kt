@@ -7,7 +7,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class GoogleOAuth2Properties(
 	val clientId: String,
 	val clientSecret: String,
-	val redirectUri: String,
 	val authorizationUri: String = "https://accounts.google.com/o/oauth2/v2/auth",
 	val tokenUri: String = "https://oauth2.googleapis.com/token",
 	val userInfoUri: String = "https://www.googleapis.com/oauth2/v3/userinfo",

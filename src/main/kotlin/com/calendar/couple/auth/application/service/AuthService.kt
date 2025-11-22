@@ -18,6 +18,8 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+private val log = KotlinLogging.logger {}
+
 @Service
 class AuthService(
 	private val oAuth2ClientFactory: OAuth2ClientFactory,
@@ -30,12 +32,13 @@ class AuthService(
 		code: String,
 		provider: String,
 	): SignInResponse {
+		log.info { "Provider: $code" }
+		log.info { "Provider: $provider" }
+		
 		val provider = provider.uppercase()
 
 		val client = oAuth2ClientFactory.getClient(provider)
-		val providerAccessToken = client.getAccessToken(code)
-
-		val userInfo = client.getUserInfo(providerAccessToken)
+		val userInfo = client.getUserInfo(code)
 
 		val accountEntity = getOrCreateAccount(provider, userInfo)
 		val accountId = accountEntity.id ?: throw IllegalStateException("Account ID is null")

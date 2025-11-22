@@ -1,8 +1,6 @@
 package com.calendar.couple.auth.infrastructure.oauth2
 
 interface OAuth2Client {
-	fun getAccessToken(code: String): String
-
 	fun getUserInfo(accessToken: String): OAuth2UserInfo
 }
 

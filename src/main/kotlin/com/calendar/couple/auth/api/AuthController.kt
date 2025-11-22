@@ -28,7 +28,7 @@ class AuthController(
 	): CommonResponse<SignInResponse> =
 		success(
 			authService.signIn(
-				request.code,
+				request.accessToken,
 				request.provider,
 			),
 		)

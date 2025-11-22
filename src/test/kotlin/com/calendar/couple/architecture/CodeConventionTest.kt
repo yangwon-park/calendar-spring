@@ -1,13 +1,13 @@
 package com.calendar.couple.architecture
 
+import com.calendar.couple.common.dto.CommonErrorResponse
+import com.calendar.couple.common.dto.CommonResponse
+import com.calendar.couple.common.dto.CommonStatusResponse
 import com.tngtech.archunit.base.DescribedPredicate
 import com.tngtech.archunit.core.domain.JavaAnnotation
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods
-import com.calendar.couple.common.dto.CommonErrorResponse
-import com.calendar.couple.common.dto.CommonResponse
-import com.calendar.couple.common.dto.CommonStatusResponse
 import io.kotest.core.spec.style.BehaviorSpec
 import jakarta.persistence.Entity
 import org.springframework.context.annotation.Configuration
@@ -267,28 +267,28 @@ class CodeConventionTest :
 				}
 			}
 
-//			Given("Test Naming Convention 테스트") {
-//				When("UnitTest로 끝나는 클래스는") {
-//					Then("unit 패키지에 위치해야 한다") {
-//						classes()
-//							.that()
-//							.haveSimpleNameEndingWith("UnitTest")
-//							.should()
-//							.resideInAPackage("..unit..")
-//							.check(classes)
-//					}
-//				}
+// 			Given("Test Naming Convention 테스트") {
+// 				When("UnitTest로 끝나는 클래스는") {
+// 					Then("unit 패키지에 위치해야 한다") {
+// 						classes()
+// 							.that()
+// 							.haveSimpleNameEndingWith("UnitTest")
+// 							.should()
+// 							.resideInAPackage("..unit..")
+// 							.check(classes)
+// 					}
+// 				}
 //
-//				When("IntegrationTest로 끝나는 클래스는") {
-//					Then("integration 패키지에 위치해야 한다") {
-//						classes()
-//							.that()
-//							.haveSimpleNameEndingWith("IntegrationTest")
-//							.should()
-//							.resideInAPackage("..integration..")
-//							.check(classes)
-//					}
-//				}
-//			}
+// 				When("IntegrationTest로 끝나는 클래스는") {
+// 					Then("integration 패키지에 위치해야 한다") {
+// 						classes()
+// 							.that()
+// 							.haveSimpleNameEndingWith("IntegrationTest")
+// 							.should()
+// 							.resideInAPackage("..integration..")
+// 							.check(classes)
+// 					}
+// 				}
+// 			}
 		}
 	})

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank
 
 data class SignInRequest(
 	@field:NotBlank(message = "Social Token은 필수입니다.")
-	val code: String,
+	val accessToken: String,
 	@field:NotBlank(message = "Social Provider는 필수입니다.")
 	val provider: String,
 )
