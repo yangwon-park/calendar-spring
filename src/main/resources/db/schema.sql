@@ -32,14 +32,27 @@ CREATE TABLE IF NOT EXISTS admin
 
 CREATE TABLE IF NOT EXISTS account_provider
 (
-	id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-	account_id  BIGINT               NOT NULL,
-	provider    VARCHAR(20)          NOT NULL,
-	provider_user_id VARCHAR(255)         NOT NULL,
-	created_at  TIMESTAMP            NOT NULL,
-	updated_at  TIMESTAMP            NOT NULL,
+	id               BIGINT AUTO_INCREMENT PRIMARY KEY,
+	account_id       BIGINT       NOT NULL,
+	provider         VARCHAR(20)  NOT NULL,
+	provider_user_id VARCHAR(255) NOT NULL,
+	created_at       TIMESTAMP    NOT NULL,
+	updated_at       TIMESTAMP    NOT NULL,
 	CONSTRAINT UK_account_provider_sns_user_id UNIQUE (provider_user_id),
 	CONSTRAINT UK_account_provider_account_id UNIQUE (account_id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS couple
+(
+	id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+	account1_id BIGINT    NOT NULL,
+	account2_id BIGINT    NOT NULL,
+	start_date  DATE      NOT NULL,
+	created_at  TIMESTAMP NOT NULL,
+	updated_at  TIMESTAMP NOT NULL,
+	CONSTRAINT UK_account_provider_account_id UNIQUE (account1_id, account2_id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
