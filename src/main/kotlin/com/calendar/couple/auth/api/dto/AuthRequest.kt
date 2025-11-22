@@ -9,11 +9,6 @@ data class SignInRequest(
 	val provider: String,
 )
 
-data class SignInResponse(
-	val accessToken: String,
-	val refreshToken: String,
-)
-
 data class RefreshTokenRequest(
 	@field:NotBlank(message = "Refresh Token은 필수입니다.")
 	val refreshToken: String,
