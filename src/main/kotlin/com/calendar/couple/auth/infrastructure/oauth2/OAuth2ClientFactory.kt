@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component
 @Component
 class OAuth2ClientFactory(
 	private val googleClient: GoogleOAuth2Client,
-	private val facebookClient: FacebookOAuth2Client,
+	private val kakaoClient: KakaoOAuth2Client,
 ) {
 	fun getClient(provider: String) =
 		when (provider) {
 			"GOOGLE" -> googleClient
-			"FACEBOOK" -> facebookClient
+			"KAKAO" -> kakaoClient
 			else -> throw IllegalArgumentException("Unsupported provider: $provider")
 		}
 }

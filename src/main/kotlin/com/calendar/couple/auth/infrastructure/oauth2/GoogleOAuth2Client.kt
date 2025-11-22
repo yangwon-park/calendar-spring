@@ -1,6 +1,6 @@
 package com.calendar.couple.auth.infrastructure.oauth2
 
-import com.calendar.couple.common.properties.GoogleOAuth2Properties
+import com.calendar.couple.common.properties.oauth2.GoogleOAuth2Properties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component

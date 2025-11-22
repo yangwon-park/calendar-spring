@@ -13,6 +13,7 @@ import com.calendar.couple.auth.infrastructure.JwtProvider
 import com.calendar.couple.auth.infrastructure.oauth2.OAuth2ClientFactory
 import com.calendar.couple.auth.infrastructure.oauth2.OAuth2UserInfo
 import com.calendar.couple.auth.infrastructure.persistence.repository.TokenRepository
+import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

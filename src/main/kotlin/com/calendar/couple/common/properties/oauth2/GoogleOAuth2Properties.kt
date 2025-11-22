@@ -1,4 +1,4 @@
-package com.calendar.couple.common.properties
+package com.calendar.couple.common.properties.oauth2
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
