@@ -6,4 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class KakaoOAuth2Properties(
 	val clientId: String,
 	val redirectUri: String,
+	val tokenUri: String = "https://kauth.kakao.com/oauth/token",
+	val apiUri: String = "https://kapi.kakao.com/oauth/token",
 )
