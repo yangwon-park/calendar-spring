@@ -18,4 +18,14 @@ enum class ErrorCode(
 	BANNED_ACCOUNT(4004, "정지된 계정입니다"),
 	WITHDRAWN_ACCOUNT(4005, "탈퇴한 계정입니다"),
 	UNAUTHORIZED(4010, "인증이 실패하였습니다"),
+
+	/**
+	 * 커플 50xx
+	 */
+	INVALID_INVITATION_CODE(5001, "유효하지 않은 초대 코드입니다"),
+	SELF_INVITATION(5002, "본인의 초대 코드는 사용할 수 없습니다"),
+	ALREADY_COUPLE(5003, "이미 커플이 존재합니다"),
+	PENDING_REQUEST_EXISTS(5004, "이미 대기 중인 커플 요청이 있습니다"),
+	NO_PENDING_REQUEST(5005, "대기 중인 커플 요청이 없습니다"),
+	INVALID_COUPLE_REQUEST(5006, "유효하지 않은 커플 요청입니다"),
 }
