@@ -90,9 +90,10 @@ class CoupleInvitationServiceUnitTest :
 
 					When("초대 코드 생성을 요청하면") {
 						Then("IllegalStateException이 발생한다") {
-							val exception = shouldThrow<IllegalStateException> {
-								fixture.service.createInvitationCode(testInviterId)
-							}
+							val exception =
+								shouldThrow<IllegalStateException> {
+									fixture.service.createInvitationCode(testInviterId)
+								}
 							exception.message shouldBe "초대 코드 생성 실패"
 						}
 

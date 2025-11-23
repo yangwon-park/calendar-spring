@@ -36,12 +36,7 @@ class AuthController(
 	@PostMapping("/refresh")
 	fun refreshToken(
 		@Valid @RequestBody request: RefreshTokenRequest,
-	): CommonResponse<SignInResponse> =
-		success(
-			authService.renewToken(
-				request.refreshToken,
-			),
-		)
+	): CommonResponse<SignInResponse> = success(authService.renewToken(request.refreshToken))
 
 	@DeleteMapping("/logout")
 	fun logout(
