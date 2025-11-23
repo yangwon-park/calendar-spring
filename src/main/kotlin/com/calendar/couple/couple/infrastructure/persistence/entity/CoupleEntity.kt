@@ -5,12 +5,12 @@ import jakarta.persistence.*
 import java.time.LocalDate
 
 @Entity
-@Table(name =  "couple")
+@Table(name = "couple")
 @Suppress("ProtectedInFinal")
 class CoupleEntity(
-	@Column(name = "account1_id",)
+	@Column(name = "account1_id")
 	val account1Id: Long,
-	@Column(name = "account2_id",)
+	@Column(name = "account2_id")
 	val account2Id: Long,
 	val startDate: LocalDate,
 ) : BaseTimeEntity() {

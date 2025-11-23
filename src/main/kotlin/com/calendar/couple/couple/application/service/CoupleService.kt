@@ -4,4 +4,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class CoupleService {
+	fun linkCouple(coupleId: Long) {
+	}
 }
