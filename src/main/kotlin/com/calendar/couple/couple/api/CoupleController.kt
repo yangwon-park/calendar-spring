@@ -6,6 +6,7 @@ import com.calendar.couple.couple.application.service.CoupleService
 import com.calendar.couple.security.userdetails.CustomUserDetails
 import jakarta.validation.Valid
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,6 +24,15 @@ class CoupleController(
 	): CommonStatusResponse {
 		coupleService.linkCouple(userDetails.accountId, request.invitationCode)
 
+		return CommonStatusResponse.success()
+	}
+
+	@DeleteMapping
+	fun unlinkCouple(
+		@AuthenticationPrincipal userDetails: CustomUserDetails,
+	): CommonStatusResponse {
+		coupleService.unlinkCouple(userDetails.accountId)
+		
 		return CommonStatusResponse.success()
 	}
 }

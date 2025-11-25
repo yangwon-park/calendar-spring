@@ -6,7 +6,6 @@ import java.time.LocalDate
 
 @Entity
 @Table(name = "couple")
-@Suppress("ProtectedInFinal")
 class CoupleEntity(
 	@Column(name = "account1_id")
 	val account1Id: Long,

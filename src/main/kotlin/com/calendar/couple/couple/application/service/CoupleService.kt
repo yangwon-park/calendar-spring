@@ -7,6 +7,7 @@ import com.calendar.couple.couple.exception.CoupleException
 import com.calendar.couple.couple.infrastructure.CoupleMapper.toEntity
 import com.calendar.couple.couple.infrastructure.persistence.repository.CoupleRepository
 import com.calendar.couple.couple.infrastructure.persistence.repository.InvitationCodeRepository
+import com.calendar.couple.couple.infrastructure.persistence.repository.deleteByAccountId
 import com.calendar.couple.couple.infrastructure.persistence.repository.existsByAccountId
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -48,6 +49,12 @@ class CoupleService(
 			startDate = savedCoupleEntity.startDate,
 			linkedAt = savedCoupleEntity.createdAt,
 		)
+	}
+
+	@Transactional
+	fun unlinkCouple(accountId: Long) {
+		coupleRepository.deleteByAccountId(accountId)
+		// TODO -> 커플에 관련된 데이터 모두 soft delete
 	}
 
 	private fun validateCoupleInvitation(

@@ -12,4 +12,8 @@ fun CoupleRepository.findByAccountId(accountId: Long): CoupleEntity? =
 /**
  * 특정 계정이 커플로 연결되어 있는지 확인합니다.
  */
-fun CoupleRepository.existsByAccountId(accountId: Long): Boolean = existsByAccount1IdOrAccount2Id(accountId, accountId)
+fun CoupleRepository.existsByAccountId(accountId: Long): Boolean = 
+	existsByAccount1IdOrAccount2Id(accountId, accountId)
+
+fun CoupleRepository.deleteByAccountId(accountId: Long) = 
+	deleteByAccount1IdOrAccount2Id(accountId, accountId)
