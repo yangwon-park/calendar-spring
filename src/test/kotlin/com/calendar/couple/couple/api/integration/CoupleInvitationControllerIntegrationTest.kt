@@ -94,7 +94,7 @@ class CoupleInvitationControllerIntegrationTest(
 							val response = objectMapper.readTree(result.response.contentAsString)
 							val invitationCode = response.get("data").get("invitationCode").asText()
 
-							val storedInviterId = invitationCodeRepository.getInviterIdByCode(invitationCode)
+							val storedInviterId = invitationCodeRepository.getInviterAccountIdByCode(invitationCode)
 							storedInviterId shouldNotBe null
 							storedInviterId shouldBe testAccountId
 						}

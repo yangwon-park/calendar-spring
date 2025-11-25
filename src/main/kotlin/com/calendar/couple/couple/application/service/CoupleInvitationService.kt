@@ -1,6 +1,6 @@
 package com.calendar.couple.couple.application.service
 
-import com.calendar.couple.couple.api.dto.CoupleInvitationResponse
+import com.calendar.couple.couple.api.dto.CoupleInvitationDto
 import com.calendar.couple.couple.infrastructure.persistence.repository.InvitationCodeRepository
 import org.springframework.stereotype.Service
 
@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service
 class CoupleInvitationService(
 	private val invitationCodeRepository: InvitationCodeRepository,
 ) {
-	fun createInvitationCode(inviterId: Long): CoupleInvitationResponse {
+	fun createInvitationCode(inviterId: Long): CoupleInvitationDto {
 		val code = generateUniqueInvitationCode()
 		invitationCodeRepository.save(code, inviterId)
 
-		return CoupleInvitationResponse(code)
+		return CoupleInvitationDto(code)
 	}
 
-	fun getInviterId(code: String): Long? = invitationCodeRepository.getInviterIdByCode(code)
+	fun getInviterId(code: String): Long? = invitationCodeRepository.getInviterAccountIdByCode(code)
 
 	fun useInvitation(code: String) {
 		invitationCodeRepository.delete(code)
@@ -24,7 +24,7 @@ class CoupleInvitationService(
 	private fun generateUniqueInvitationCode(): String {
 		repeat(5) {
 			val code = generateInvitationCode()
-			if (invitationCodeRepository.getInviterIdByCode(code) == null) {
+			if (invitationCodeRepository.getInviterAccountIdByCode(code) == null) {
 				return code
 			}
 		}

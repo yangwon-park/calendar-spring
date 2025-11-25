@@ -2,7 +2,7 @@ package com.calendar.couple.couple.api
 
 import com.calendar.couple.common.dto.CommonResponse
 import com.calendar.couple.common.dto.CommonResponse.Companion.success
-import com.calendar.couple.couple.api.dto.CoupleInvitationResponse
+import com.calendar.couple.couple.api.dto.CoupleInvitationDto
 import com.calendar.couple.couple.application.service.CoupleInvitationService
 import com.calendar.couple.security.userdetails.CustomUserDetails
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -18,6 +18,5 @@ class CoupleInvitationController(
 	@PostMapping
 	fun createInvitationCode(
 		@AuthenticationPrincipal userDetails: CustomUserDetails,
-	): CommonResponse<CoupleInvitationResponse> =
-		success(coupleInvitationService.createInvitationCode(userDetails.accountId))
+	): CommonResponse<CoupleInvitationDto> = success(coupleInvitationService.createInvitationCode(userDetails.accountId))
 }

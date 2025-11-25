@@ -34,7 +34,7 @@ class CoupleInvitationServiceUnitTest :
 					val fixture = createFixture()
 					val testInviterId = 1L
 
-					every { fixture.invitationCodeRepository.getInviterIdByCode(any()) } returns null
+					every { fixture.invitationCodeRepository.getInviterAccountIdByCode(any()) } returns null
 					every { fixture.invitationCodeRepository.save(any(), testInviterId) } just runs
 
 					When("초대 코드 생성을 요청하면") {
@@ -61,7 +61,7 @@ class CoupleInvitationServiceUnitTest :
 					val testInviterId = 1L
 					var callCount = 0
 
-					every { fixture.invitationCodeRepository.getInviterIdByCode(any()) } answers {
+					every { fixture.invitationCodeRepository.getInviterAccountIdByCode(any()) } answers {
 						callCount++
 						if (callCount == 1) 999L else null
 					}
@@ -75,7 +75,7 @@ class CoupleInvitationServiceUnitTest :
 						}
 
 						Then("중복 체크가 2번 이상 호출된다") {
-							verify(atLeast = 2) { fixture.invitationCodeRepository.getInviterIdByCode(any()) }
+							verify(atLeast = 2) { fixture.invitationCodeRepository.getInviterAccountIdByCode(any()) }
 						}
 					}
 				}
@@ -86,7 +86,7 @@ class CoupleInvitationServiceUnitTest :
 					val fixture = createFixture()
 					val testInviterId = 1L
 
-					every { fixture.invitationCodeRepository.getInviterIdByCode(any()) } returns 999L
+					every { fixture.invitationCodeRepository.getInviterAccountIdByCode(any()) } returns 999L
 
 					When("초대 코드 생성을 요청하면") {
 						Then("IllegalStateException이 발생한다") {
@@ -98,7 +98,7 @@ class CoupleInvitationServiceUnitTest :
 						}
 
 						Then("중복 체크가 정확히 5번 호출된다") {
-							verify(exactly = 5) { fixture.invitationCodeRepository.getInviterIdByCode(any()) }
+							verify(exactly = 5) { fixture.invitationCodeRepository.getInviterAccountIdByCode(any()) }
 						}
 
 						Then("save는 호출되지 않는다") {
@@ -114,7 +114,7 @@ class CoupleInvitationServiceUnitTest :
 					val testCode = "ABC123"
 					val testInviterId = 1L
 
-					every { fixture.invitationCodeRepository.getInviterIdByCode(testCode) } returns testInviterId
+					every { fixture.invitationCodeRepository.getInviterAccountIdByCode(testCode) } returns testInviterId
 
 					When("inviterId를 조회하면") {
 						val result = fixture.service.getInviterId(testCode)
@@ -124,7 +124,7 @@ class CoupleInvitationServiceUnitTest :
 						}
 
 						Then("Repository에서 조회가 수행된다") {
-							verify(exactly = 1) { fixture.invitationCodeRepository.getInviterIdByCode(testCode) }
+							verify(exactly = 1) { fixture.invitationCodeRepository.getInviterAccountIdByCode(testCode) }
 						}
 					}
 				}
@@ -133,7 +133,7 @@ class CoupleInvitationServiceUnitTest :
 					val fixture = createFixture()
 					val testCode = "INVALID"
 
-					every { fixture.invitationCodeRepository.getInviterIdByCode(testCode) } returns null
+					every { fixture.invitationCodeRepository.getInviterAccountIdByCode(testCode) } returns null
 
 					When("inviterId를 조회하면") {
 						val result = fixture.service.getInviterId(testCode)
