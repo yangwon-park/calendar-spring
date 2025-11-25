@@ -5,5 +5,5 @@ import java.time.LocalDate
 data class Couple(
 	val account1Id: Long,
 	val account2Id: Long,
-	val starteDate: LocalDate
+	val startDate: LocalDate
 )

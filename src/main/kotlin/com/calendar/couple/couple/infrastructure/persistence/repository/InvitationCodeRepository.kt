@@ -15,7 +15,7 @@ class InvitationCodeRepository(
 		redisTemplate.opsForValue().set("${INVITATION_PREFIX}$code", inviterId.toString(), INVITATION_TTL)
 	}
 
-	fun getInviterAccountIdByCode(code: String): Long? = 
+	fun getInviterAccountIdByCode(code: String): Long? =
 		redisTemplate.opsForValue().get("${INVITATION_PREFIX}$code")?.toLong()
 
 	fun delete(code: String) = redisTemplate.delete("${INVITATION_PREFIX}$code")

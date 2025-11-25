@@ -7,6 +7,7 @@ import com.calendar.couple.couple.exception.CoupleException
 import com.calendar.couple.couple.infrastructure.CoupleMapper.toEntity
 import com.calendar.couple.couple.infrastructure.persistence.repository.CoupleRepository
 import com.calendar.couple.couple.infrastructure.persistence.repository.InvitationCodeRepository
+import com.calendar.couple.couple.infrastructure.persistence.repository.existsByAccountId
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,16 +24,18 @@ class CoupleService(
 		accountId: Long,
 		invitationCode: String,
 	): LinkCoupleResponse {
-		val inviterAccountId = invitationCodeRepository.getInviterAccountIdByCode(invitationCode)
-			?: throw CoupleException.InvalidInvitationCodeException()
+		val inviterAccountId =
+			invitationCodeRepository.getInviterAccountIdByCode(invitationCode)
+				?: throw CoupleException.InvalidInvitationCodeException()
 		
 		val inviterName = validateCoupleInvitation(accountId, inviterAccountId)
 
-		val couple = Couple(
-			account1Id = inviterAccountId,
-			account2Id = accountId,
-			starteDate = LocalDate.now()
-		)
+		val couple =
+			Couple(
+				account1Id = inviterAccountId,
+				account2Id = accountId,
+				startDate = LocalDate.now(),
+			)
 		
 		val savedCoupleEntity = coupleRepository.save(couple.toEntity())
 		
@@ -43,7 +46,7 @@ class CoupleService(
 			partnerId = inviterAccountId,
 			partnerName = inviterName,
 			startDate = savedCoupleEntity.startDate,
-			linkedAt = savedCoupleEntity.createdAt
+			linkedAt = savedCoupleEntity.createdAt,
 		)
 	}
 
@@ -54,18 +57,19 @@ class CoupleService(
 		if (accountId == inviterAccountId) throw CoupleException.SelfInvitationException()
 
 		// 3. 이미 커플인지 확인 (초대한 사람)
-		if (coupleRepository.existsById(inviterAccountId)) {
+		if (coupleRepository.existsByAccountId(inviterAccountId)) {
 			throw CoupleException.AlreadyCoupledInviterException()
 		}
 
 		// 4. 이미 커플인지 확인 (초대받은 사람)
-		if (coupleRepository.existsById(accountId)) {
+		if (coupleRepository.existsByAccountId(accountId)) {
 			throw CoupleException.AlreadyCoupledInviteeException()
 		}
 
 		// 5. 두 계정이 모두 존재하는지 확인
-		val inviterName = accountRepository.findByIdOrNull(inviterAccountId)?.name
-			?: throw IllegalStateException("No Account")
+		val inviterName =
+			accountRepository.findByIdOrNull(inviterAccountId)?.name
+				?: throw IllegalStateException("No Account")
 
 		val isExistingAccount = accountRepository.existsById(accountId)
 		
