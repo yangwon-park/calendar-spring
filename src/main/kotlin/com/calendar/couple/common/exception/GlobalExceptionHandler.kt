@@ -2,6 +2,7 @@ package com.calendar.couple.common.exception
 
 import com.calendar.couple.auth.exception.AuthException
 import com.calendar.couple.common.dto.CommonErrorResponse
+import com.calendar.couple.couple.exception.CoupleException
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -30,4 +31,24 @@ class GlobalExceptionHandler {
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	fun handleIllegalStateException(e: IllegalStateException): CommonErrorResponse =
 		CommonErrorResponse(e.message, HttpStatus.INTERNAL_SERVER_ERROR.value())
+
+	@ExceptionHandler(CoupleException.InvalidInvitationCodeException::class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	fun handleInvalidInvitationCodeException(e: CoupleException.InvalidInvitationCodeException): CommonErrorResponse =
+		CommonErrorResponse(e.message, HttpStatus.BAD_REQUEST.value())
+
+	@ExceptionHandler(CoupleException.SelfInvitationException::class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	fun handleSelfInvitationException(e: CoupleException.SelfInvitationException): CommonErrorResponse =
+		CommonErrorResponse(e.message, HttpStatus.BAD_REQUEST.value())
+
+	@ExceptionHandler(CoupleException.AlreadyCoupledInviterException::class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	fun handleAlreadyCoupledInviterException(e: CoupleException.AlreadyCoupledInviterException): CommonErrorResponse =
+		CommonErrorResponse(e.message, HttpStatus.CONFLICT.value())
+
+	@ExceptionHandler(CoupleException.AlreadyCoupledInviteeException::class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	fun handleAlreadyCoupledInviteeException(e: CoupleException.AlreadyCoupledInviteeException): CommonErrorResponse =
+		CommonErrorResponse(e.message, HttpStatus.CONFLICT.value())
 }
