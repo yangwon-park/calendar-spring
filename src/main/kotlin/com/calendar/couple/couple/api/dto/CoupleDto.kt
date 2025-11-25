@@ -18,3 +18,7 @@ data class LinkCoupleResponse(
 	val startDate: LocalDate,
 	val linkedAt: LocalDateTime,
 )
+
+data class CoupleAdditionalRequest(
+	val startDate: LocalDate,
+)

@@ -9,6 +9,7 @@ import com.calendar.couple.couple.infrastructure.persistence.repository.CoupleRe
 import com.calendar.couple.couple.infrastructure.persistence.repository.InvitationCodeRepository
 import com.calendar.couple.couple.infrastructure.persistence.repository.deleteByAccountId
 import com.calendar.couple.couple.infrastructure.persistence.repository.existsByAccountId
+import com.calendar.couple.couple.infrastructure.persistence.repository.findByAccountId
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -28,7 +29,7 @@ class CoupleService(
 		val inviterAccountId =
 			invitationCodeRepository.getInviterAccountIdByCode(invitationCode)
 				?: throw CoupleException.InvalidInvitationCodeException()
-		
+
 		val inviterName = validateCoupleInvitation(accountId, inviterAccountId)
 
 		val couple =
@@ -37,11 +38,11 @@ class CoupleService(
 				account2Id = accountId,
 				startDate = LocalDate.now(),
 			)
-		
+
 		val savedCoupleEntity = coupleRepository.save(couple.toEntity())
-		
+
 		invitationCodeRepository.delete(invitationCode)
-		
+
 		return LinkCoupleResponse(
 			coupleId = savedCoupleEntity.id!!,
 			partnerId = inviterAccountId,
@@ -49,6 +50,20 @@ class CoupleService(
 			startDate = savedCoupleEntity.startDate,
 			linkedAt = savedCoupleEntity.createdAt,
 		)
+	}
+
+	@Transactional
+	fun updateAdditionalInfo(
+		startDate: LocalDate,
+		accountId: Long,
+	) {
+		val couple =
+			coupleRepository.findByAccountId(accountId)
+				?: throw IllegalStateException("커플없음")
+
+		couple.updateStartDate(startDate)
+		
+		coupleRepository.updateStartDate(couple.id!!, startDate)
 	}
 
 	@Transactional
@@ -79,9 +94,9 @@ class CoupleService(
 				?: throw IllegalStateException("No Account")
 
 		val isExistingAccount = accountRepository.existsById(accountId)
-		
+
 		if (!isExistingAccount) throw IllegalStateException("No Account")
-		
+
 		return inviterName
 	}
 }
