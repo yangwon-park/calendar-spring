@@ -13,7 +13,7 @@ interface CoupleRepository : JpaRepository<CoupleEntity, Long> {
 		account1Id: Long,
 		account2Id: Long,
 	): CoupleEntity?
-	
+
 	fun deleteByAccount1IdOrAccount2Id(
 		account1Id: Long,
 		account2Id: Long,
