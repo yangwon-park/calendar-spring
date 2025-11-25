@@ -19,7 +19,7 @@ services:
     image: redis:7-alpine
     container_name: calendar-couple-redis
     ports:
-      - "6379:6379"
+      - "6399:6379"
     networks:
       - calendar-couple-network
     command: redis-server --appendonly yes  # 데이터 영속성 옵션 (AOF) 활성화, RDB 방식은?
