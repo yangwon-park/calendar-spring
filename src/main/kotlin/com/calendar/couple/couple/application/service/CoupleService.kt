@@ -61,9 +61,9 @@ class CoupleService(
 			coupleRepository.findByAccountId(accountId)
 				?: throw IllegalStateException("커플없음")
 
-		couple.updateStartDate(startDate)
+		val updatedCouple = couple.updateStartDate(startDate)
 		
-		coupleRepository.updateStartDate(couple.id!!, startDate)
+		coupleRepository.updateStartDate(updatedCouple.id!!, updatedCouple.startDate)
 	}
 
 	@Transactional

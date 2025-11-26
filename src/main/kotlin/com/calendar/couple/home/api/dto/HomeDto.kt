@@ -16,5 +16,5 @@ data class CoupleInfo(
 	val partnerId: Long,
 	val partnerName: String,
 	val startDate: LocalDate,
-	val daysCount: Long = ChronoUnit.DAYS.between(startDate, LocalDate.now()),
+	val daysCount: Long = ChronoUnit.DAYS.between(startDate, LocalDate.now()) + 1L,
 )
