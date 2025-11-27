@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS account_provider
 	provider_user_id VARCHAR(255) NOT NULL,
 	created_at       TIMESTAMP    NOT NULL,
 	updated_at       TIMESTAMP    NOT NULL,
-	CONSTRAINT UK_account_provider_sns_user_id UNIQUE (provider_user_id),
+	CONSTRAINT UK_account_provider_provider_user_id UNIQUE (provider_user_id),
 	CONSTRAINT UK_account_provider_account_id UNIQUE (account_id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -52,7 +52,49 @@ CREATE TABLE IF NOT EXISTS couple
 	start_date  DATE      NOT NULL,
 	created_at  TIMESTAMP NOT NULL,
 	updated_at  TIMESTAMP NOT NULL,
-	CONSTRAINT UK_account_provider_account_id UNIQUE (account1_id, account2_id)
+	CONSTRAINT UK_couple_account1_id_account2_id UNIQUE (account1_id, account2_id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS calendar
+(
+	id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+	owner_id    BIGINT       NOT NULL,
+	name        VARCHAR(100) NOT NULL,
+	type        VARCHAR(20)  NOT NULL, -- PERSONAL, COUPLE, GROUP
+	color       VARCHAR(7)   NOT NULL,
+	description TEXT,
+	created_at  TIMESTAMP     NOT NULL,
+	updated_at  TIMESTAMP     NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS calendar_share
+(
+	id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+	calendar_id BIGINT      NOT NULL,
+	account_id  BIGINT      NOT NULL,
+	permission  VARCHAR(10) NOT NULL, -- READ, WRITE
+	created_at  TIMESTAMP    NOT NULL,
+	CONSTRAINT UK_calendar_calendar_id_account_id UNIQUE (calendar_id, account_id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS event
+(
+	id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+	calendar_id BIGINT       NOT NULL,
+	account_id  BIGINT       NOT NULL,
+	category_id BIGINT       NOT NULL,
+	title       VARCHAR(200) NOT NULL,
+	description TEXT,
+	event_date  DATE         NOT NULL,
+	created_at  DATETIME     NOT NULL,
+	updated_at  DATETIME     NOT NULL,
+	INDEX IDX_calendar_date (calendar_id, event_date)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
