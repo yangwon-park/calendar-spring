@@ -13,6 +13,10 @@ import com.calendar.couple.auth.infrastructure.JwtProvider
 import com.calendar.couple.auth.infrastructure.oauth2.OAuth2ClientFactory
 import com.calendar.couple.auth.infrastructure.oauth2.OAuth2UserInfo
 import com.calendar.couple.auth.infrastructure.persistence.repository.TokenRepository
+import com.calendar.couple.calendar.domain.Calendar
+import com.calendar.couple.calendar.domain.CalendarType
+import com.calendar.couple.calendar.infrastructure.CalendarMapper.toEntity
+import com.calendar.couple.calendar.infrastructure.persistence.repository.CalendarRepository
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -25,6 +29,7 @@ class AuthService(
 	private val oAuth2ClientFactory: OAuth2ClientFactory,
 	private val accountRepository: AccountRepository,
 	private val accountProviderRepository: AccountProviderRepository,
+	private val calendarRepository: CalendarRepository,
 	private val tokenRepository: TokenRepository,
 	private val jwtProvider: JwtProvider,
 ) {
@@ -32,9 +37,6 @@ class AuthService(
 		code: String,
 		provider: String,
 	): SignInResponse {
-		log.info { "Provider: $code" }
-		log.info { "Provider: $provider" }
-		
 		val provider = provider.uppercase()
 
 		val client = oAuth2ClientFactory.getClient(provider)
@@ -103,6 +105,16 @@ class AuthService(
 						userInfo.id,
 					),
 				)
+
+				val personalCalendar =
+					Calendar(
+						ownerId = newAccountEntity.id!!,
+						name = "",
+						type = CalendarType.PERSONAL,
+						color = "#3788D8",
+					)
+				
+				calendarRepository.save(personalCalendar.toEntity())
 
 				newAccountEntity
 			} else {
