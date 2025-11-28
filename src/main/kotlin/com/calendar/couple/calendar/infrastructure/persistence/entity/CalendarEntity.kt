@@ -16,7 +16,6 @@ class CalendarEntity(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	val id: Long? = null
-
 	var name: String = name
 		protected set
 	var type: String = type

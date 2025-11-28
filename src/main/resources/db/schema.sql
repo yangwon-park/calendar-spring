@@ -71,14 +71,16 @@ CREATE TABLE IF NOT EXISTS calendar
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS calendar_share
+CREATE TABLE IF NOT EXISTS calendar_member
 (
 	id          BIGINT PRIMARY KEY AUTO_INCREMENT,
 	calendar_id BIGINT      NOT NULL,
 	account_id  BIGINT      NOT NULL,
-	permission  VARCHAR(10) NOT NULL, -- READ, WRITE
-	created_at  TIMESTAMP    NOT NULL,
-	CONSTRAINT UK_calendar_calendar_id_account_id UNIQUE (calendar_id, account_id)
+	role        VARCHAR(20) NOT NULL, -- OWNER, ADMIN, MEMBER, VIEWER 등
+	status      VARCHAR(20) NOT NULL, -- ACCEPTED, PENDING (초대 수락 여부 등)
+	created_at  TIMESTAMP   NOT NULL,
+
+	CONSTRAINT UK_calendar_member UNIQUE (calendar_id, account_id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
