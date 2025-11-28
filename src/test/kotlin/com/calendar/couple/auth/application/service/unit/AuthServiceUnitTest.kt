@@ -97,7 +97,7 @@ class AuthServiceUnitTest :
 					idField.isAccessible = true
 					idField.set(savedAccountEntity, 1L)
 
-					every { fixture.accountRepository.save(any()) } returns savedAccountEntity
+						every { fixture.accountRepository.save(any()) } returns savedAccountEntity
 
 					// AccountProvider 저장
 					every { fixture.accountProviderRepository.save(any()) } returns
@@ -106,6 +106,9 @@ class AuthServiceUnitTest :
 							testProvider,
 							testUserInfo.id,
 						)
+
+					// 개인 캘린더 자동 생성
+					every { fixture.calendarRepository.save(any()) } returns mockk()
 
 					// JWT 생성
 					every { fixture.jwtProvider.generateAccessToken(1L, AccountRole.USER.name) } returns "ACCESS-TOKEN-USER"
