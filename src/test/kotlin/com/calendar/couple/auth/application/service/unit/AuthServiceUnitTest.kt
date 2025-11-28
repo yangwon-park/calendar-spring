@@ -9,6 +9,7 @@ import com.calendar.couple.auth.infrastructure.JwtProvider
 import com.calendar.couple.auth.infrastructure.RefreshTokenInfo
 import com.calendar.couple.auth.infrastructure.oauth2.OAuth2ClientFactory
 import com.calendar.couple.auth.infrastructure.persistence.repository.TokenRepository
+import com.calendar.couple.calendar.infrastructure.persistence.repository.CalendarRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.BehaviorSpec
@@ -25,6 +26,7 @@ class AuthServiceUnitTest :
 			val oauth2ClientFactory: OAuth2ClientFactory,
 			val accountRepository: AccountRepository,
 			val accountProviderRepository: AccountProviderRepository,
+			val calendarRepository: CalendarRepository,
 			val tokenRepository: TokenRepository,
 			val jwtProvider: JwtProvider,
 			val service: AuthService,
@@ -34,6 +36,7 @@ class AuthServiceUnitTest :
 			val oAuth2ClientFactory = mockk<OAuth2ClientFactory>()
 			val accountRepository = mockk<AccountRepository>()
 			val accountProviderRepository = mockk<AccountProviderRepository>()
+			val calendarRepository = mockk<CalendarRepository>()
 			val tokenRepository = mockk<TokenRepository>()
 			val jwtProvider = mockk<JwtProvider>()
 			val service =
@@ -41,6 +44,7 @@ class AuthServiceUnitTest :
 					oAuth2ClientFactory,
 					accountRepository,
 					accountProviderRepository,
+					calendarRepository,
 					tokenRepository,
 					jwtProvider,
 				)
@@ -49,6 +53,7 @@ class AuthServiceUnitTest :
 				oAuth2ClientFactory,
 				accountRepository,
 				accountProviderRepository,
+				calendarRepository,
 				tokenRepository,
 				jwtProvider,
 				service,

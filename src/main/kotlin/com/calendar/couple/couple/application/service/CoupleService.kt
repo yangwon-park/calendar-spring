@@ -1,10 +1,20 @@
 package com.calendar.couple.couple.application.service
 
 import com.calendar.couple.account.infrastructure.persistence.repository.AccountRepository
+import com.calendar.couple.calendar.domain.Calendar
+import com.calendar.couple.calendar.domain.CalendarMember
+import com.calendar.couple.calendar.domain.CalendarMemberRole
+import com.calendar.couple.calendar.domain.CalendarMemberStatus
+import com.calendar.couple.calendar.domain.CalendarType
+import com.calendar.couple.calendar.infrastructure.CalendarMapper.toEntity
+import com.calendar.couple.calendar.infrastructure.CalendarMemberMapper.toEntity
+import com.calendar.couple.calendar.infrastructure.persistence.repository.CalendarMemberRepository
+import com.calendar.couple.calendar.infrastructure.persistence.repository.CalendarRepository
 import com.calendar.couple.couple.api.dto.LinkCoupleResponse
 import com.calendar.couple.couple.domain.Couple
 import com.calendar.couple.couple.exception.CoupleException
 import com.calendar.couple.couple.infrastructure.CoupleMapper.toEntity
+import com.calendar.couple.couple.infrastructure.persistence.entity.CoupleEntity
 import com.calendar.couple.couple.infrastructure.persistence.repository.CoupleRepository
 import com.calendar.couple.couple.infrastructure.persistence.repository.InvitationCodeRepository
 import com.calendar.couple.couple.infrastructure.persistence.repository.deleteByAccountId
@@ -19,6 +29,8 @@ import java.time.LocalDate
 class CoupleService(
 	private val accountRepository: AccountRepository,
 	private val coupleRepository: CoupleRepository,
+	private val calendarRepository: CalendarRepository,
+	private val calendarMemberRepository: CalendarMemberRepository,
 	private val invitationCodeRepository: InvitationCodeRepository,
 ) {
 	@Transactional
@@ -32,14 +44,27 @@ class CoupleService(
 
 		val inviterName = validateCoupleInvitation(accountId, inviterAccountId)
 
-		val couple =
-			Couple(
-				account1Id = inviterAccountId,
-				account2Id = accountId,
-				startDate = LocalDate.now(),
+		val savedCoupleEntity = saveCouple(inviterAccountId, accountId)
+
+		val coupleCalendar =
+			Calendar(
+				ownerId = accountId,
+				name = "",
+				type = CalendarType.COUPLE,
+				color = "#ed3b3b",
 			)
 
-		val savedCoupleEntity = coupleRepository.save(couple.toEntity())
+		val savedCalendarEntity = calendarRepository.save(coupleCalendar.toEntity())
+
+		val calendarMember =
+			CalendarMember(
+				calendarId = savedCalendarEntity.id!!,
+				accountId = inviterAccountId,
+				role = CalendarMemberRole.MEMBER,
+				status = CalendarMemberStatus.ACTIVE,
+			)
+
+		calendarMemberRepository.save(calendarMember.toEntity())
 
 		invitationCodeRepository.delete(invitationCode)
 
@@ -62,7 +87,7 @@ class CoupleService(
 				?: throw IllegalStateException("커플없음")
 
 		val updatedCouple = couple.updateStartDate(startDate)
-		
+
 		coupleRepository.updateStartDate(updatedCouple.id!!, updatedCouple.startDate)
 	}
 
@@ -98,5 +123,20 @@ class CoupleService(
 		if (!isExistingAccount) throw IllegalStateException("No Account")
 
 		return inviterName
+	}
+
+	private fun saveCouple(
+		inviterAccountId: Long,
+		accountId: Long,
+	): CoupleEntity {
+		val couple =
+			Couple(
+				account1Id = inviterAccountId,
+				account2Id = accountId,
+				startDate = LocalDate.now(),
+			)
+
+		val savedCoupleEntity = coupleRepository.save(couple.toEntity())
+		return savedCoupleEntity
 	}
 }

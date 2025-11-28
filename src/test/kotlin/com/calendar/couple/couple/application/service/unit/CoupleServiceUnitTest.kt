@@ -2,6 +2,10 @@ package com.calendar.couple.couple.application.service.unit
 
 import com.calendar.couple.account.infrastructure.persistence.entity.AccountEntity
 import com.calendar.couple.account.infrastructure.persistence.repository.AccountRepository
+import com.calendar.couple.calendar.infrastructure.persistence.entity.CalendarEntity
+import com.calendar.couple.calendar.infrastructure.persistence.entity.CalendarMemberEntity
+import com.calendar.couple.calendar.infrastructure.persistence.repository.CalendarMemberRepository
+import com.calendar.couple.calendar.infrastructure.persistence.repository.CalendarRepository
 import com.calendar.couple.couple.application.service.CoupleService
 import com.calendar.couple.couple.exception.CoupleException
 import com.calendar.couple.couple.infrastructure.persistence.entity.CoupleEntity
@@ -22,6 +26,8 @@ class CoupleServiceUnitTest :
 		data class CoupleServiceTestFixture(
 			val accountRepository: AccountRepository,
 			val coupleRepository: CoupleRepository,
+			val calendarRepository: CalendarRepository,
+			val calendarMemberRepository: CalendarMemberRepository,
 			val invitationCodeRepository: InvitationCodeRepository,
 			val service: CoupleService,
 		)
@@ -29,17 +35,23 @@ class CoupleServiceUnitTest :
 		fun createFixture(): CoupleServiceTestFixture {
 			val accountRepository = mockk<AccountRepository>()
 			val coupleRepository = mockk<CoupleRepository>()
+			val calendarRepository = mockk<CalendarRepository>()
+			val calendarMemberRepository = mockk<CalendarMemberRepository>()
 			val invitationCodeRepository = mockk<InvitationCodeRepository>()
 			val service =
 				CoupleService(
 					accountRepository,
 					coupleRepository,
+					calendarRepository,
+					calendarMemberRepository,
 					invitationCodeRepository,
 				)
 
 			return CoupleServiceTestFixture(
 				accountRepository,
 				coupleRepository,
+				calendarRepository,
+				calendarMemberRepository,
 				invitationCodeRepository,
 				service,
 			)
@@ -53,6 +65,7 @@ class CoupleServiceUnitTest :
 					val inviterAccountId = 1L
 					val invitationCode = "ABC123"
 					val inviterName = "초대한사람"
+					val calendarId = 100L
 
 					val mockInviterAccount =
 						mockk<AccountEntity> {
@@ -69,12 +82,21 @@ class CoupleServiceUnitTest :
 							every { createdAt } returns java.time.LocalDateTime.now()
 						}
 
+					val mockCalendarEntity =
+						mockk<CalendarEntity> {
+							every { id } returns calendarId
+						}
+
+					val mockCalendarMemberEntity = mockk<CalendarMemberEntity>()
+
 					every { fixture.invitationCodeRepository.getInviterAccountIdByCode(invitationCode) } returns inviterAccountId
 					every { fixture.coupleRepository.existsByAccount1IdOrAccount2Id(inviterAccountId, inviterAccountId) } returns false
 					every { fixture.coupleRepository.existsByAccount1IdOrAccount2Id(accountId, accountId) } returns false
 					every { fixture.accountRepository.findByIdOrNull(inviterAccountId) } returns mockInviterAccount
 					every { fixture.accountRepository.existsById(accountId) } returns true
 					every { fixture.coupleRepository.save(any()) } returns mockCoupleEntity
+					every { fixture.calendarRepository.save(any()) } returns mockCalendarEntity
+					every { fixture.calendarMemberRepository.save(any()) } returns mockCalendarMemberEntity
 					every { fixture.invitationCodeRepository.delete(invitationCode) } returns true
 
 					When("커플 연결을 요청하면") {
@@ -90,6 +112,20 @@ class CoupleServiceUnitTest :
 
 						Then("커플 엔티티가 저장된다") {
 							verify(exactly = 1) { fixture.coupleRepository.save(any()) }
+						}
+
+						Then("커플 캘린더가 생성된다") {
+							verify(exactly = 1) { fixture.calendarRepository.save(any()) }
+						}
+
+						Then("초대한 사람이 캘린더 멤버로 등록된다") {
+							verify(exactly = 1) {
+								fixture.calendarMemberRepository.save(
+									match {
+										it.calendarId == calendarId && it.accountId == inviterAccountId
+									},
+								)
+							}
 						}
 
 						Then("초대 코드가 삭제된다") {
@@ -213,6 +249,55 @@ class CoupleServiceUnitTest :
 								verify(exactly = 1) {
 									fixture.coupleRepository.deleteByAccount1IdOrAccount2Id(accountId, accountId)
 								}
+							}
+						}
+					}
+				}
+			}
+
+			Context("커플 시작일 업데이트 성공 플로우") {
+				Given("커플이 연결된 계정과 새로운 시작일이 주어졌을 때") {
+					val fixture = createFixture()
+					val accountId = 1L
+					val coupleId = 100L
+					val originalStartDate = LocalDate.of(2024, 1, 1)
+					val newStartDate = LocalDate.of(2024, 12, 25)
+
+					val mockCoupleEntity =
+						mockk<CoupleEntity> {
+							every { id } returns coupleId
+							every { account1Id } returns accountId
+							every { account2Id } returns 2L
+							every { startDate } returns originalStartDate
+						}
+
+					every { fixture.coupleRepository.findByAccount1IdOrAccount2Id(accountId, accountId) } returns mockCoupleEntity
+					every { fixture.coupleRepository.updateStartDate(coupleId, newStartDate) } just runs
+
+					When("커플 시작일 업데이트를 요청하면") {
+						fixture.service.updateAdditionalInfo(newStartDate, accountId)
+
+						Then("새로운 시작일로 업데이트된다") {
+							verify(exactly = 1) {
+								fixture.coupleRepository.updateStartDate(coupleId, newStartDate)
+							}
+						}
+					}
+				}
+			}
+
+			Context("커플 시작일 업데이트 실패 - 커플이 존재하지 않는 경우") {
+				Given("커플이 연결되지 않은 계정 ID가 주어졌을 때") {
+					val fixture = createFixture()
+					val accountId = 1L
+					val newStartDate = LocalDate.of(2024, 12, 25)
+
+					every { fixture.coupleRepository.findByAccount1IdOrAccount2Id(accountId, accountId) } returns null
+
+					When("커플 시작일 업데이트를 요청하면") {
+						Then("IllegalStateException이 발생한다") {
+							shouldThrow<IllegalStateException> {
+								fixture.service.updateAdditionalInfo(newStartDate, accountId)
 							}
 						}
 					}

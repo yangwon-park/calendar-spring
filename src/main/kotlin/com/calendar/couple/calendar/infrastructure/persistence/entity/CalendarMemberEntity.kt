@@ -15,7 +15,7 @@ class CalendarMemberEntity(
 	val accountId: Long,
 	role: String,
 	status: String,
-): BaseTimeEntity() {
+) : BaseTimeEntity() {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	val id: Long? = null
