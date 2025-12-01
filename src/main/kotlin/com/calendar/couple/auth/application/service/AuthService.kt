@@ -112,6 +112,7 @@ class AuthService(
 						name = "",
 						type = CalendarType.PERSONAL,
 						color = "#3788D8",
+						description = "기본 제공되는 캘린더입니다",
 					)
 				
 				calendarRepository.save(personalCalendar.toEntity())

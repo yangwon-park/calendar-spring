@@ -97,7 +97,7 @@ class AuthServiceUnitTest :
 					idField.isAccessible = true
 					idField.set(savedAccountEntity, 1L)
 
-						every { fixture.accountRepository.save(any()) } returns savedAccountEntity
+					every { fixture.accountRepository.save(any()) } returns savedAccountEntity
 
 					// AccountProvider 저장
 					every { fixture.accountProviderRepository.save(any()) } returns
