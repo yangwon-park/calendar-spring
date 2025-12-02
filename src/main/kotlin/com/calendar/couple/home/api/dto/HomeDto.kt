@@ -1,9 +1,20 @@
 package com.calendar.couple.home.api.dto
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 data class HomeResponse(
+	val eventInfos: List<EventInfo>,
+)
+
+data class EventInfo(
+	val calendarId: Long,
+	val categoryId: Long,
+	val eventAt: LocalDateTime,
+)
+
+data class HomeCoupleInfo(
 	val accountInfo: AccountInfo,
 	val coupleInfo: CoupleInfo?,
 )

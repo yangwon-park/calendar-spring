@@ -26,20 +26,22 @@ class CalendarService(
 				calendarId = it.calendarId ?: throw IllegalStateException("Calendar Id is null"),
 				name = it.name,
 				description = it.description,
+				color = it.color,
 				type = it.type.name,
 			)
 		}
 	}
 
 	fun getCalendarByCalendarId(calendarId: Long): CalendarResponse {
-		val calendar = 
-			calendarRepository.findByIdOrNull(calendarId)?.toDomain() 
+		val calendar =
+			calendarRepository.findByIdOrNull(calendarId)?.toDomain()
 				?: throw IllegalStateException("Calendar not found")
 		
 		return CalendarResponse(
 			calendarId = calendar.calendarId ?: throw IllegalStateException("Calendar Id is null"),
 			name = calendar.name,
 			description = calendar.description,
+			color = calendar.color,
 			type = calendar.type.name,
 		)
 	}
@@ -63,13 +65,14 @@ class CalendarService(
 				description = request.description,
 			)
 		
-		val updatedRows = calendarRepository.update(
-			newCalendar.name,
-			newCalendar.type.name,
-			newCalendar.color,
-			newCalendar.description,
-			calendarId,
-		)
+		val updatedRows =
+			calendarRepository.update(
+				newCalendar.name,
+				newCalendar.type.name,
+				newCalendar.color,
+				newCalendar.description,
+				calendarId,
+			)
 		
 		if (updatedRows == 0) {
 			log.warn { "Calendar not found: $calendarId" }

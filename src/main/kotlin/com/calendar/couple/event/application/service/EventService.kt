@@ -7,6 +7,8 @@ import com.calendar.couple.event.infrastructure.persistence.repository.EventRepo
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+private val log = mu.KotlinLogging.logger {}
+
 @Service
 class EventService(
 	private val eventRepository: EventRepository,
@@ -25,7 +27,7 @@ class EventService(
 				eventAt = request.eventAt,
 				description = request.description,
 			)
-		
-		eventRepository.save(event.toEntity())
+
+		eventRepository.save(event.toEntity()).id
 	}
 }

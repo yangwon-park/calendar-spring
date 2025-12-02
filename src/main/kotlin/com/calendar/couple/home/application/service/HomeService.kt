@@ -5,8 +5,12 @@ import com.calendar.couple.account.infrastructure.persistence.repository.Account
 import com.calendar.couple.auth.exception.AuthException
 import com.calendar.couple.couple.infrastructure.persistence.repository.CoupleRepository
 import com.calendar.couple.couple.infrastructure.persistence.repository.findByAccountId
+import com.calendar.couple.event.infrastructure.EventMapper.toDomain
+import com.calendar.couple.event.infrastructure.persistence.repository.EventRepository
 import com.calendar.couple.home.api.dto.AccountInfo
 import com.calendar.couple.home.api.dto.CoupleInfo
+import com.calendar.couple.home.api.dto.EventInfo
+import com.calendar.couple.home.api.dto.HomeCoupleInfo
 import com.calendar.couple.home.api.dto.HomeResponse
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -16,9 +20,28 @@ private val log = mu.KotlinLogging.logger {}
 @Service
 class HomeService(
 	private val accountRepository: AccountRepository,
+	private val eventRepository: EventRepository,
 	private val coupleRepository: CoupleRepository,
 ) {
-	fun getCoupleInfo(accountId: Long): HomeResponse {
+	fun getHomeInfo(accountId: Long): HomeResponse {
+		val eventDomains =
+			eventRepository.findAllByAccountId(accountId).map {
+				it.toDomain()
+			}
+
+		val eventInfos =
+			eventDomains.map {
+				EventInfo(
+					it.calendarId,
+					it.categoryId,
+					it.eventAt,
+				)
+			}
+
+		return HomeResponse(eventInfos)
+	}
+
+	fun getCoupleInfo(accountId: Long): HomeCoupleInfo {
 		val account =
 			accountRepository.findByIdOrNull(accountId)?.toDomain()
 				?: throw IllegalStateException("존재하지 않는 회원")
@@ -27,7 +50,7 @@ class HomeService(
 			AccountInfo(
 				name = account.name,
 			)
-		
+
 		// 2. 커플 정보 조회 (nullable)
 		val coupleInfo =
 			coupleRepository.findByAccountId(accountId)?.let { couple ->
@@ -51,8 +74,8 @@ class HomeService(
 			}
 
 		log.info { "getCoupleInfo: $coupleInfo" }
-		
-		return HomeResponse(
+
+		return HomeCoupleInfo(
 			accountInfo = accountInfo,
 			coupleInfo = coupleInfo,
 		)

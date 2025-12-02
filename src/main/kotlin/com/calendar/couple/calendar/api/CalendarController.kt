@@ -34,9 +34,7 @@ class CalendarController(
 	@GetMapping("/{calendarId}")
 	fun getCalendarByCalendarId(
 		@PathVariable calendarId: Long,
-	): CommonResponse<CalendarResponse> {
-		return success(calendarService.getCalendarByCalendarId(calendarId))
-	}
+	): CommonResponse<CalendarResponse> = success(calendarService.getCalendarByCalendarId(calendarId))
 
 	@PutMapping("/{calendarId}")
 	fun updateCalendar(

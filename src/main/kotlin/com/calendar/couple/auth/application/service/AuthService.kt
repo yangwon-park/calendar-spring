@@ -57,6 +57,9 @@ class AuthService(
 			tokenRepository.getRefreshTokenByAccountId(accountId)
 				?: throw JwtAuthException.ExpiredTokenException("Refresh Token이 만료되었습니다.")
 
+		log.info { "Refresh Token: $refreshToken" }
+		log.info { "Stored Token: $storedToken" }
+		
 		if (storedToken != refreshToken) {
 			tokenRepository.deleteRefreshTokenByAccountId(accountId)
 			throw JwtAuthException.InvalidTokenException()

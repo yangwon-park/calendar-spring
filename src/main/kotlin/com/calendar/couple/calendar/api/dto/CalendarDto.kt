@@ -4,6 +4,7 @@ data class CalendarResponse(
 	val calendarId: Long,
 	val name: String,
 	val type: String,
+	val color: String,
 	val description: String?,
 )
 

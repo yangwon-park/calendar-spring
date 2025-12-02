@@ -1,6 +1,5 @@
 package com.calendar.couple.calendar.infrastructure.persistence.repository
 
-import com.calendar.couple.calendar.domain.CalendarType
 import com.calendar.couple.calendar.infrastructure.persistence.entity.CalendarEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying

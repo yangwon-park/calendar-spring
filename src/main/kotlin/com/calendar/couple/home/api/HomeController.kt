@@ -1,6 +1,7 @@
 package com.calendar.couple.home.api
 
 import com.calendar.couple.common.dto.CommonResponse
+import com.calendar.couple.home.api.dto.HomeCoupleInfo
 import com.calendar.couple.home.api.dto.HomeResponse
 import com.calendar.couple.home.application.service.HomeService
 import com.calendar.couple.security.userdetails.CustomUserDetails
@@ -17,12 +18,19 @@ private val log = KotlinLogging.logger {}
 class HomeController(
 	private val homeService: HomeService,
 ) {
-	@GetMapping("/couples")
-	fun getCoupleInfo(
+	@GetMapping
+	fun getHomeInfo(
 		@AuthenticationPrincipal userDetails: CustomUserDetails,
 	): CommonResponse<HomeResponse> {
-		val result = homeService.getCoupleInfo(userDetails.accountId)
+		val result = homeService.getHomeInfo(userDetails.accountId)
+		
+		log.info { "result: $result" }
 		
 		return CommonResponse.success(result)
 	}
+
+	@GetMapping("/couples")
+	fun getCoupleInfo(
+		@AuthenticationPrincipal userDetails: CustomUserDetails,
+	): CommonResponse<HomeCoupleInfo> = CommonResponse.success(homeService.getCoupleInfo(userDetails.accountId))
 }

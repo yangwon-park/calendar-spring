@@ -12,4 +12,9 @@ data class CreateEventRequest(
 
 data class CreateEventResponse(
 	val id: Long,
+	val calendarId: Long,
+	val categoryId: Long,
+	val title: String,
+	val description: String?,
+	val eventAt: LocalDateTime,
 )
