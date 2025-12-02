@@ -93,10 +93,12 @@ CREATE TABLE IF NOT EXISTS event
 	category_id BIGINT       NOT NULL,
 	title       VARCHAR(200) NOT NULL,
 	description TEXT,
-	event_at    TIMESTAMP    NOT NULL,
+	is_all_day  BOOLEAN      NOT NULL DEFAULT FALSE,
+	start_at    TIMESTAMP    NOT NULL,
+	end_at      TIMESTAMP    NULL,
 	created_at  TIMESTAMP    NOT NULL,
 	updated_at  TIMESTAMP    NOT NULL,
-	INDEX IDX_calendar_date (calendar_id, event_at)
+	INDEX IDX_calendar_date (calendar_id, start_at)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;

@@ -9,9 +9,12 @@ data class HomeResponse(
 )
 
 data class EventInfo(
+	val title: String,
 	val calendarId: Long,
 	val categoryId: Long,
-	val eventAt: LocalDateTime,
+	val isAllDay: Boolean,
+	val startAt: LocalDateTime,
+	val endAt: LocalDateTime?,
 )
 
 data class HomeCoupleInfo(

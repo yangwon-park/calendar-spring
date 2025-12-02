@@ -5,6 +5,7 @@ import com.calendar.couple.account.infrastructure.persistence.repository.Account
 import com.calendar.couple.auth.exception.AuthException
 import com.calendar.couple.couple.infrastructure.persistence.entity.CoupleEntity
 import com.calendar.couple.couple.infrastructure.persistence.repository.CoupleRepository
+import com.calendar.couple.event.infrastructure.persistence.repository.EventRepository
 import com.calendar.couple.home.application.service.HomeService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.common.ExperimentalKotest
@@ -23,17 +24,20 @@ class HomeServiceUnitTest :
 	BehaviorSpec({
 		data class HomeServiceTestFixture(
 			val accountRepository: AccountRepository,
+			val eventRepository: EventRepository,
 			val coupleRepository: CoupleRepository,
 			val service: HomeService,
 		)
 
 		fun createFixture(): HomeServiceTestFixture {
 			val accountRepository = mockk<AccountRepository>()
+			val eventRepository = mockk<EventRepository>()
 			val coupleRepository = mockk<CoupleRepository>()
-			val service = HomeService(accountRepository, coupleRepository)
+			val service = HomeService(accountRepository, eventRepository, coupleRepository)
 
 			return HomeServiceTestFixture(
 				accountRepository,
+				eventRepository,
 				coupleRepository,
 				service,
 			)

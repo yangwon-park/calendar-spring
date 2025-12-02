@@ -24,8 +24,10 @@ class EventService(
 				calendarId = request.calendarId,
 				categoryId = request.categoryId,
 				title = request.title,
-				eventAt = request.eventAt,
 				description = request.description,
+				isAllDay = request.isAllDay,
+				startAt = request.startAt,
+				endAt = request.endAt,
 			)
 
 		eventRepository.save(event.toEntity()).id

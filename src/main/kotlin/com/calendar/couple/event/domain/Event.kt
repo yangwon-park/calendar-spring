@@ -9,5 +9,7 @@ data class Event(
 	val categoryId: Long,
 	val title: String,
 	val description: String?,
-	val eventAt: LocalDateTime,
+	val isAllDay: Boolean,
+	val startAt: LocalDateTime,
+	val endAt: LocalDateTime?,
 )

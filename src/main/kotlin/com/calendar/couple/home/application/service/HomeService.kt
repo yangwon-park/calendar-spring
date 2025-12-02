@@ -32,9 +32,12 @@ class HomeService(
 		val eventInfos =
 			eventDomains.map {
 				EventInfo(
-					it.calendarId,
-					it.categoryId,
-					it.eventAt,
+					title = it.title,
+					calendarId = it.calendarId,
+					categoryId = it.categoryId,
+					isAllDay = it.isAllDay,
+					startAt = it.startAt,
+					endAt = it.endAt,
 				)
 			}
 

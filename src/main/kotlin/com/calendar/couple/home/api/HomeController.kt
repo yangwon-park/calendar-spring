@@ -21,13 +21,7 @@ class HomeController(
 	@GetMapping
 	fun getHomeInfo(
 		@AuthenticationPrincipal userDetails: CustomUserDetails,
-	): CommonResponse<HomeResponse> {
-		val result = homeService.getHomeInfo(userDetails.accountId)
-		
-		log.info { "result: $result" }
-		
-		return CommonResponse.success(result)
-	}
+	): CommonResponse<HomeResponse> = CommonResponse.success(homeService.getHomeInfo(userDetails.accountId))
 
 	@GetMapping("/couples")
 	fun getCoupleInfo(

@@ -7,7 +7,9 @@ data class CreateEventRequest(
 	val categoryId: Long,
 	val title: String,
 	val description: String? = null,
-	val eventAt: LocalDateTime,
+	val isAllDay: Boolean,
+	val startAt: LocalDateTime,
+	val endAt: LocalDateTime? = null,
 )
 
 data class CreateEventResponse(
@@ -16,5 +18,7 @@ data class CreateEventResponse(
 	val categoryId: Long,
 	val title: String,
 	val description: String?,
-	val eventAt: LocalDateTime,
+	val isAllDay: Boolean,
+	val startAt: LocalDateTime,
+	val endAt: LocalDateTime?,
 )

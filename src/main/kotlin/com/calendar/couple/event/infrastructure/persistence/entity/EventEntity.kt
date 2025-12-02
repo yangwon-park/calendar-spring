@@ -13,7 +13,9 @@ class EventEntity(
 	categoryId: Long,
 	title: String,
 	description: String? = null,
-	eventAt: LocalDateTime,
+	isAllDay: Boolean,
+	startAt: LocalDateTime,
+	endAt: LocalDateTime? = null,
 ) : BaseTimeEntity() {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +33,12 @@ class EventEntity(
 	var description: String? = description
 		protected set
 
-	var eventAt: LocalDateTime = eventAt
+	var isAllDay: Boolean = isAllDay
+		protected set
+
+	var startAt: LocalDateTime = startAt
+		protected set
+
+	var endAt: LocalDateTime? = endAt
 		protected set
 }
