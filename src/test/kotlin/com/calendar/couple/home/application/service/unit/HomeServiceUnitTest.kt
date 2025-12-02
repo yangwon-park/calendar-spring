@@ -248,4 +248,109 @@ class HomeServiceUnitTest :
 				}
 			}
 		}
+
+		Context("HomeService의 홈 이벤트 정보 조회 로직 검증 목적 단위 테스트") {
+			Given("사용자의 이벤트가 존재할 때") {
+				val fixture = createFixture()
+				val testAccountId = 1L
+
+				val eventEntities =
+					listOf(
+						com.calendar.couple.event.infrastructure.persistence.entity.EventEntity(
+							accountId = testAccountId,
+							calendarId = 1L,
+							categoryId = 1L,
+							title = "회의",
+							description = "팀 회의",
+							isAllDay = false,
+							startAt = java.time.LocalDateTime.of(2025, 1, 1, 10, 0),
+							endAt = java.time.LocalDateTime.of(2025, 1, 1, 12, 0),
+						),
+						com.calendar.couple.event.infrastructure.persistence.entity.EventEntity(
+							accountId = testAccountId,
+							calendarId = 1L,
+							categoryId = 2L,
+							title = "데이트",
+							description = "저녁 식사",
+							isAllDay = false,
+							startAt = java.time.LocalDateTime.of(2025, 1, 2, 18, 0),
+							endAt = java.time.LocalDateTime.of(2025, 1, 2, 21, 0),
+						),
+					)
+
+				every { fixture.eventRepository.findAllByAccountId(testAccountId) } returns eventEntities
+
+				When("홈 이벤트 정보를 조회하면") {
+					val result = fixture.service.getHomeInfo(testAccountId)
+
+					Then("모든 이벤트 정보가 반환된다") {
+						result.eventInfos.size shouldBe 2
+						result.eventInfos[0].title shouldBe "회의"
+						result.eventInfos[0].calendarId shouldBe 1L
+						result.eventInfos[0].categoryId shouldBe 1L
+						result.eventInfos[0].isAllDay shouldBe false
+						result.eventInfos[1].title shouldBe "데이트"
+						result.eventInfos[1].calendarId shouldBe 1L
+						result.eventInfos[1].categoryId shouldBe 2L
+					}
+
+					Then("Repository 조회 메서드가 호출된다") {
+						verify(exactly = 1) { fixture.eventRepository.findAllByAccountId(testAccountId) }
+					}
+				}
+			}
+
+			Given("사용자의 이벤트가 존재하지 않을 때") {
+				val fixture = createFixture()
+				val testAccountId = 1L
+
+				every { fixture.eventRepository.findAllByAccountId(testAccountId) } returns emptyList()
+
+				When("홈 이벤트 정보를 조회하면") {
+					val result = fixture.service.getHomeInfo(testAccountId)
+
+					Then("빈 이벤트 목록이 반환된다") {
+						result.eventInfos.size shouldBe 0
+					}
+
+					Then("Repository 조회 메서드가 호출된다") {
+						verify(exactly = 1) { fixture.eventRepository.findAllByAccountId(testAccountId) }
+					}
+				}
+			}
+
+			Given("하루 종일 이벤트가 포함된 경우") {
+				val fixture = createFixture()
+				val testAccountId = 1L
+
+				val eventEntities =
+					listOf(
+						com.calendar.couple.event.infrastructure.persistence.entity.EventEntity(
+							accountId = testAccountId,
+							calendarId = 1L,
+							categoryId = 1L,
+							title = "휴가",
+							description = "연차",
+							isAllDay = true,
+							startAt = java.time.LocalDateTime.of(2025, 1, 1, 0, 0),
+							endAt = null,
+						),
+					)
+
+				every { fixture.eventRepository.findAllByAccountId(testAccountId) } returns eventEntities
+
+				When("홈 이벤트 정보를 조회하면") {
+					val result = fixture.service.getHomeInfo(testAccountId)
+
+					Then("하루 종일 이벤트 정보가 올바르게 반환된다") {
+						result.eventInfos.size shouldBe 1
+						result.eventInfos[0].title shouldBe "휴가"
+						result.eventInfos[0].calendarId shouldBe 1L
+						result.eventInfos[0].categoryId shouldBe 1L
+						result.eventInfos[0].isAllDay shouldBe true
+						result.eventInfos[0].endAt shouldBe null
+					}
+				}
+			}
+		}
 	})
