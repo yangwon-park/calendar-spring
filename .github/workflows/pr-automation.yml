@@ -13,14 +13,14 @@ jobs:
     if: github.event.action == 'opened' || github.event.action == 'ready_for_review'
     runs-on: ubuntu-latest
     steps:
-      - name: Add Review Needed Label
+      - name: Add Label [Review Needed]
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           ACTOR: ${{ github.actor }}
         run: |
           gh pr edit $PR_NUMBER -R ${{ github.repository }} --add-label "Review Needed"
-      - name: Add Reviewers
+      - name: Add Assignee & Reviewers
         uses: kentaro-m/auto-assign-action@v2.0.0
         with:
           configuration-path: '.github/config/auto_assign_config.yml'
@@ -29,7 +29,7 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: Update Labels on Merge
+      - name: Update Labels on Merge [Review Needed -> Approved]
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
