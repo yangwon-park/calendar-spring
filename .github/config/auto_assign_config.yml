@@ -1,7 +1,6 @@
 addReviewers: true
 addAssignees: author
 reviewers:
-  
   - yangwon-park
 
 numberOfReviewers: 0 # default => 모두
