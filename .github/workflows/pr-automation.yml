@@ -1,0 +1,63 @@
+name: PR Automation
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, closed]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  pr-setup:
+    if: github.event.action == 'opened' || github.event.action == 'ready_for_review'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # 1. Assignee 자동 할당 및 Label 추가
+      - name: Auto-assign Author & Add Label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          gh pr edit $PR_NUMBER --add-assignee "$ACTOR"
+          
+          gh pr edit $PR_NUMBER --add-label "Review Needed"
+
+      # 2. Reviewers 자동 할당
+#      - name: Auto-assign Reviewers (Exclude Author)
+#        env:
+#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          PR_NUMBER: ${{ github.event.pull_request.number }}
+#          ACTOR: ${{ github.actor }}
+#          # 여기에 리뷰어로 지정할 팀원들의 GitHub ID를 공백으로 구분하여 적어주세요
+#          CANDIDATES: "team-member-1 team-member-2 team-member-3"
+#        run: |
+#          REVIEWERS=""
+#          for user in $CANDIDATES; do
+#            if [ "$user" != "$ACTOR" ]; then
+#              REVIEWERS="$REVIEWERS $user"
+#            fi
+#          done
+#
+#          if [ -n "$REVIEWERS" ]; then
+#            echo "Adding reviewers: $REVIEWERS"
+#            gh pr edit $PR_NUMBER --add-reviewer "$REVIEWERS"
+#          else
+#            echo "No reviewers to assign (or author is the only candidate)."
+#          fi
+
+  pr-merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Labels on Merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr edit $PR_NUMBER --add-label "Approved" --remove-label "Review Needed"
