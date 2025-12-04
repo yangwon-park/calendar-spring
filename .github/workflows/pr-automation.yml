@@ -1,5 +1,6 @@
 name: PR Automation
 
+# 필요 시점에 yml 분리
 on:
   pull_request:
     types: [opened, ready_for_review, closed]
@@ -12,36 +13,25 @@ jobs:
     if: github.event.action == 'opened' || github.event.action == 'ready_for_review'
     runs-on: ubuntu-latest
     steps:
-      - name: Auto-assign Author & Reviewers
+      - name: Add Label [Review Needed]
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           ACTOR: ${{ github.actor }}
-          CANDIDATES: "team-member-1 team-member-2"
         run: |
-          # -R ${{ github.repository }} 옵션 추가
-          gh pr edit $PR_NUMBER -R ${{ github.repository }} --add-assignee "$ACTOR" --add-label "Review Needed"
-
-#          REVIEWERS=""
-#          for user in $CANDIDATES; do
-#            if [ "$user" != "$ACTOR" ]; then
-#              REVIEWERS="$REVIEWERS $user"
-#            fi
-#          done
-#
-#          if [ -n "$REVIEWERS" ]; then
-#            # 여기도 -R 옵션 추가
-#            gh pr edit $PR_NUMBER -R ${{ github.repository }} --add-reviewer "$REVIEWERS"
-#          fi
+          gh pr edit $PR_NUMBER -R ${{ github.repository }} --add-label "Review Needed"
+      - name: Add Assignee & Reviewers
+        uses: kentaro-m/auto-assign-action@v2.0.0
+        with:
+          configuration-path: '.github/config/auto_assign_config.yml'
 
   pr-merged:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: Update Labels on Merge
+      - name: Update Labels on Merge [Review Needed -> Approved]
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          # 여기도 -R 옵션 추가
           gh pr edit $PR_NUMBER -R ${{ github.repository }} --add-label "Approved" --remove-label "Review Needed"

@@ -1,0 +1,10 @@
+addReviewers: true
+addAssignees: author
+reviewers:
+  
+  - yangwon-park
+
+numberOfReviewers: 0 # default => 모두
+
+# skipKeywords:
+#  - 관련 키워드 포함인 경우 리뷰어 추가 생략
